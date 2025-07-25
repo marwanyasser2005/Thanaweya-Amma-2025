@@ -1,5 +1,5 @@
 
-# Thanaweya 2025 Results Portal - Marwan Yasser
+# Thanaweya 2025 Results Portal - Marwan Abdelghaffar
 
 A premium bilingual (Arabic-English) web portal for Egypt's Thanaweya Amma 2025 results. Built with Flask, the application offers a dynamic, animated, and accessible experience with search functionality by seat number or name.
 
