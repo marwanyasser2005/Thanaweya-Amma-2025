@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if language == 'ar' %}
+        {% if error %}
+            خطأ في البحث - نتائج الثانوية العامة 2025
+        {% else %}
+            نتيجة {{ name }} - نتائج الثانوية العامة 2025
+        {% endif %}
+    {% else %}
+        {% if error %}
+            Search Error - Thanaweya Results 2025
+        {% else %}
+            Result for {{ name }} - Thanaweya Results 2025
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% if error %}
+    <!-- Error Section -->
+    <div class="error-section">
+        <h2 class="error-title">
+            <svg class="icon icon-lg">
+                <use href="#error-icon"></use>
+            </svg>
+            {% if language == 'ar' %}
+                عذراً، حدث خطأ
+            {% else %}
+                Sorry, an error occurred
+            {% endif %}
+        </h2>
+        <p class="error-message">{{ error }}</p>
+        <a href="{{ url_for('index', language=language) }}" class="back-button">
+            <svg class="icon">
+                <use href="#back-icon"></use>
+            </svg>
+            {% if language == 'ar' %}
+                العودة للبحث
+            {% else %}
+                Back to Search
+            {% endif %}
+        </a>
+    </div>
+{% else %}
+    <!-- Success Result Section -->
+    <div class="result-section">
+        <div class="result-header">
+            <h2 class="result-title">
+                <svg class="icon icon-lg">
+                    <use href="#success-icon"></use>
+                </svg>
+                {% if language == 'ar' %}
+                    تم العثور على النتيجة
+                {% else %}
+                    Result Found
+                {% endif %}
+            </h2>
+            <p class="result-subtitle">
+                {% if language == 'ar' %}
+                    إليك تفاصيل النتيجة المطلوبة
+                {% else %}
+                    Here are the requested result details
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="result-card">
+            <!-- Student Name -->
+            <div class="result-item">
+                <div class="result-label">
+                    <svg class="icon">
+                        <use href="#user-icon"></use>
+                    </svg>
+                    {% if language == 'ar' %}
+                        اسم الطالب
+                    {% else %}
+                        Student Name
+                    {% endif %}
+                </div>
+                <div class="result-value name">{{ name }}</div>
+            </div>
+            
+            <!-- Seat Number -->
+            <div class="result-item">
+                <div class="result-label">
+                    <svg class="icon">
+                        <use href="#number-icon"></use>
+                    </svg>
+                    {% if language == 'ar' %}
+                        رقم الجلوس
+                    {% else %}
+                        Seat Number
+                    {% endif %}
+                </div>
+                <div class="result-value seat">{{ seating_no }}</div>
+            </div>
+            
+            <!-- Total Degree -->
+            <div class="result-item">
+                <div class="result-label">
+                    <svg class="icon">
+                        <use href="#trophy-icon"></use>
+                    </svg>
+                    {% if language == 'ar' %}
+                        الدرجة الإجمالية
+                    {% else %}
+                        Total Degree
+                    {% endif %}
+                </div>
+                <div class="result-value total">{{ total }} / 320</div>
+            </div>
+            
+            <!-- Percentage -->
+            <div class="result-item">
+                <div class="result-label">
+                    <svg class="icon">
+                        <use href="#percentage-icon"></use>
+                    </svg>
+                    {% if language == 'ar' %}
+                        النسبة المئوية
+                    {% else %}
+                        Percentage
+                    {% endif %}
+                </div>
+                <div class="result-value percentage">{{ percentage }}%</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{{ url_for('index', language=language) }}" class="back-button">
+                <svg class="icon">
+                    <use href="#back-icon"></use>
+                </svg>
+                {% if language == 'ar' %}
+                    بحث جديد
+                {% else %}
+                    New Search
+                {% endif %}
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+// Add celebration animation for successful results
+{% if not error %}
+document.addEventListener('DOMContentLoaded', function() {
+    // Add confetti effect or celebration animation here if needed
+    const resultSection = document.querySelector('.result-section');
+    resultSection.style.animation = 'slideInUp 0.6s ease, pulse 2s ease 0.6s';
+});
+{% endif %}
+
+// Add print functionality
+function printResult() {
+    window.print();
+}
+
+// Add keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        window.location.href = "{{ url_for('index', language=language) }}";
+    }
+});
+</script>
+{% endblock %}
+

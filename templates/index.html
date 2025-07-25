@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if language == 'ar' %}
+        نتائج الثانوية العامة 2025 - ابحث عن نتيجتك
+    {% else %}
+        Thanaweya Results 2025 - Search Your Results
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="search-section">
+    <h2 class="search-title">
+        {% if language == 'ar' %}
+            ابحث عن نتيجتك
+        {% else %}
+            Search Your Results
+        {% endif %}
+    </h2>
+    <p class="search-subtitle">
+        {% if language == 'ar' %}
+            أدخل رقم الجلوس أو اسم الطالب للحصول على النتيجة
+        {% else %}
+            Enter seat number or student name to get results
+        {% endif %}
+    </p>
+    
+    <form class="search-form" action="{{ url_for('result', language=language) }}" method="POST" id="searchForm">
+        <div class="input-group">
+            <svg class="input-icon icon">
+                <use href="#user-icon"></use>
+            </svg>
+            <input 
+                type="text" 
+                name="searchInput" 
+                class="search-input" 
+                placeholder="{% if language == 'ar' %}رقم الجلوس أو اسم الطالب{% else %}Seat number or student name{% endif %}"
+                required
+                autocomplete="off"
+                id="searchInput"
+            >
+        </div>
+        
+        <button type="submit" class="search-button" id="searchButton">
+            <svg class="icon">
+                <use href="#search-icon"></use>
+            </svg>
+            {% if language == 'ar' %}
+                ابحث الآن
+            {% else %}
+                Search Now
+            {% endif %}
+        </button>
+    </form>
+</div>
+
+<script>
+// Add loading state to search button
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+    const button = document.getElementById('searchButton');
+    const input = document.getElementById('searchInput');
+    
+    if (!input.value.trim()) {
+        e.preventDefault();
+        input.focus();
+        input.style.borderColor = 'var(--error-color)';
+        setTimeout(() => {
+            input.style.borderColor = '';
+        }, 2000);
+        return;
+    }
+    
+    button.innerHTML = `
+        <div class="loading"></div>
+        {% if language == 'ar' %}
+            جاري البحث...
+        {% else %}
+            Searching...
+        {% endif %}
+    `;
+    button.disabled = true;
+});
+
+// Reset input border color on focus
+document.getElementById('searchInput').addEventListener('focus', function() {
+    this.style.borderColor = '';
+});
+</script>
+{% endblock %}
+

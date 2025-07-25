@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="{{ language }}" dir="{{ 'rtl' if language == 'ar' else 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}نتائج الثانوية العامة 2025 - Thanaweya Results 2025{% endblock %}</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="{% if language == 'ar' %}نتائج الثانوية العامة 2025 - ابحث عن نتيجتك بسهولة{% else %}Thanaweya 2025 Results - Search your results easily{% endif %}">
+    <meta name="keywords" content="{% if language == 'ar' %}نتائج الثانوية العامة, ثانوية عامة 2025, نتائج الطلاب{% else %}Thanaweya results, High school results 2025, Student results{% endif %}">
+    <meta name="author" content="Marwan Abdelgaffar">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{% if language == 'ar' %}نتائج الثانوية العامة 2025{% else %}Thanaweya Results 2025{% endif %}">
+    <meta property="og:description" content="{% if language == 'ar' %}ابحث عن نتيجة الثانوية العامة 2025 بسهولة{% else %}Search for Thanaweya 2025 results easily{% endif %}">
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Additional CSS -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body lang="{{ language }}">
+    <!-- SVG Icons -->
+    <div style="display: none;">
+        {% include 'icons.html' %}
+    </div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <svg class="icon icon-lg">
+                            <use href="#graduation-icon"></use>
+                        </svg>
+                    </div>
+                    <h1 class="site-title">
+                        {% if language == 'ar' %}
+                            نتائج الثانوية العامة 2025
+                        {% else %}
+                            Thanaweya Results 2025
+                        {% endif %}
+                    </h1>
+                </div>
+                
+                <button class="language-toggle" onclick="toggleLanguage()">
+                    <svg class="icon">
+                        <use href="#language-icon"></use>
+                    </svg>
+                    {% if language == 'ar' %}
+                        English
+                    {% else %}
+                        العربية
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-text">
+                    {% if language == 'ar' %}
+                        صنع بواسطة مروان ياسر
+                    {% else %}
+                        Made by Marwan Abdelgaffar
+                    {% endif %}
+                </p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/Marwan-Abdelghaffar/" class="social-link" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                        <svg class="icon">
+                            <use href="#linkedin-icon"></use>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/marwanyasser2005" class="social-link" target="_blank" rel="noopener noreferrer" title="GitHub">
+                        <svg class="icon">
+                            <use href="#github-icon"></use>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
