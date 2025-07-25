@@ -57,8 +57,8 @@ Thanaweya2025/
 ## 👨‍💻 Developed by Marwan Yasser Hassan Abdelghaffar
 
 - 🌐 [Website](https://qjketnyd.manus.space/)
-- 🔗 [LinkedIn](https://www.linkedin.com/in/marwanabdelghaffar)
-- 💻 [GitHub](https://github.com/marwanabdelghaffar)
+- 🔗 [LinkedIn](https://www.linkedin.com/in/Marwan-Abdelghaffar/)
+- 💻 [GitHub](https://github.com/marwanyasser2005/)
 - ✉️ [Email](mailto:ymeryasso123@gmail.com)
 
 ---
@@ -103,6 +103,7 @@ http://localhost:5000/ar أو /en
 ## 🧾 من تطوير مروان ياسر حسن عبد الغفار
 
 - 🌐 [موقعي الشخصي](https://qjketnyd.manus.space/)
-- 🔗 [LinkedIn](https://www.linkedin.com/in/marwanabdelghaffar)
-- 💻 [GitHub](https://github.com/marwanabdelghaffar)
+- 🔗 [LinkedIn](https://www.linkedin.com/in/Marwan-Abdelghaffar/)
+- 💻 [GitHub](https://github.com/marwanyasser2005/)
+
 - ✉️ [بريدي الإلكتروني](mailto:ymeryasso123@gmail.com)
