@@ -1,63 +1,75 @@
-// Main JavaScript file for Thanaweya 2025 Results Portal
-// Author: Marwan Yasser
+// Enhanced Main JavaScript for Thanaweya Results 2025
+// Created by Marwan Abdelgaffar
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
-// Initialize the application
 function initializeApp() {
-    setupLanguageToggle();
-    setupFormValidation();
-    setupAnimations();
-    setupKeyboardNavigation();
-    setupAccessibility();
-}
-
-// Language toggle functionality
-function toggleLanguage() {
-    const currentLang = document.documentElement.lang;
-    const newLang = currentLang === 'ar' ? 'en' : 'ar';
+    // Initialize all components
+    initializeLanguageToggle();
+    initializeSearchForm();
+    initializeAnimations();
+    initializeTheme();
+    initializeAccessibility();
     
-    // Add loading state
-    const toggleButton = document.querySelector('.language-toggle');
-    const originalContent = toggleButton.innerHTML;
-    toggleButton.innerHTML = '<div class="loading"></div>';
-    toggleButton.disabled = true;
+    // Add loading states
+    addLoadingStates();
     
-    // Navigate to the same page with new language
-    const currentPath = window.location.pathname;
-    let newPath;
-    
-    if (currentPath === '/' || currentPath === '/ar' || currentPath === '/en') {
-        newPath = `/${newLang}`;
-    } else {
-        // Handle result pages and other routes
-        newPath = currentPath.replace(/\/(ar|en)/, `/${newLang}`);
-    }
-    
-    // Smooth transition
-    document.body.style.opacity = '0.7';
-    document.body.style.transition = 'opacity 0.3s ease';
-    
-    setTimeout(() => {
-        window.location.href = newPath;
-    }, 300);
-}
-
-// Setup language toggle
-function setupLanguageToggle() {
-    const toggleButton = document.querySelector('.language-toggle');
-    if (toggleButton) {
-        toggleButton.addEventListener('click', toggleLanguage);
+    // Initialize page-specific features
+    const currentPage = getCurrentPage();
+    switch(currentPage) {
+        case 'index':
+            initializeSearchPage();
+            break;
+        case 'result':
+            initializeResultsPage();
+            break;
+        case 'student_details':
+            initializeDetailsPage();
+            break;
     }
 }
 
-// Form validation and enhancement
-function setupFormValidation() {
-    const searchForm = document.getElementById('searchForm');
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
+function getCurrentPage() {
+    const path = window.location.pathname;
+    if (path.includes('/student/')) return 'student_details';
+    if (path.includes('/result/')) return 'result';
+    return 'index';
+}
+
+// Language Toggle Enhancement
+function initializeLanguageToggle() {
+    const languageToggle = document.querySelector('.language-toggle');
+    if (!languageToggle) return;
+    
+    languageToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Add loading animation
+        this.classList.add('loading');
+        this.disabled = true;
+        
+        // Get current language
+        const currentLang = document.documentElement.lang || 'ar';
+        const newLang = currentLang === 'ar' ? 'en' : 'ar';
+        
+        // Smooth transition
+        document.body.style.opacity = '0.7';
+        document.body.style.transition = 'opacity 0.3s ease';
+        
+        setTimeout(() => {
+            // Navigate to toggle language route
+            window.location.href = `/toggle-language/${currentLang}`;
+        }, 300);
+    });
+}
+
+// Enhanced Search Form
+function initializeSearchForm() {
+    const searchForm = document.querySelector('.search-form');
+    const searchInput = document.querySelector('#searchInput');
+    const searchButton = document.querySelector('.search-btn');
     
     if (!searchForm || !searchInput || !searchButton) return;
     
@@ -68,94 +80,120 @@ function setupFormValidation() {
         
         // Update button state
         searchButton.disabled = !isValid;
-        searchButton.style.opacity = isValid ? '1' : '0.6';
+        searchButton.classList.toggle('disabled', !isValid);
         
-        // Clear error styling
-        if (this.style.borderColor === 'var(--error-color)') {
-            this.style.borderColor = '';
-        }
+        // Visual feedback
+        this.classList.toggle('valid', isValid);
+        this.classList.toggle('invalid', !isValid && value.length > 0);
     });
     
     // Enhanced form submission
     searchForm.addEventListener('submit', function(e) {
-        const value = searchInput.value.trim();
+        e.preventDefault();
         
-        if (!value) {
-            e.preventDefault();
-            showInputError(searchInput, 'يرجى إدخال رقم الجلوس أو الاسم');
+        const searchValue = searchInput.value.trim();
+        if (!searchValue) {
+            showNotification('يرجى إدخال رقم الجلوس أو الاسم', 'error');
             return;
         }
         
-        // Validate input format
-        if (value.length < 2) {
-            e.preventDefault();
-            showInputError(searchInput, 'يرجى إدخال قيمة صحيحة');
-            return;
-        }
+        // Add loading state
+        searchButton.classList.add('loading');
+        searchButton.disabled = true;
         
-        // Show loading state
-        showLoadingState(searchButton);
+        // Show loading animation
+        showLoadingOverlay();
+        
+        // Submit form
+        setTimeout(() => {
+            this.submit();
+        }, 500);
     });
     
     // Auto-focus on page load
-    searchInput.focus();
-}
-
-// Show input error
-function showInputError(input, message) {
-    input.style.borderColor = 'var(--error-color)';
-    input.style.animation = 'shake 0.6s ease';
-    input.focus();
-    
-    // Show tooltip or alert
-    const currentLang = document.documentElement.lang;
-    const errorMessage = currentLang === 'ar' ? message : 'Please enter a valid value';
-    
-    // Create temporary error message
-    const errorDiv = document.createElement('div');
-    errorDiv.textContent = errorMessage;
-    errorDiv.style.cssText = `
-        position: absolute;
-        background: var(--error-color);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: var(--radius-md);
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
-        z-index: 1000;
-        animation: fadeIn 0.3s ease;
-    `;
-    
-    const inputGroup = input.closest('.input-group');
-    inputGroup.style.position = 'relative';
-    inputGroup.appendChild(errorDiv);
-    
-    // Remove error message after 3 seconds
     setTimeout(() => {
-        if (errorDiv.parentNode) {
-            errorDiv.remove();
-        }
-        input.style.borderColor = '';
-        input.style.animation = '';
-    }, 3000);
+        searchInput.focus();
+    }, 500);
 }
 
-// Show loading state for button
-function showLoadingState(button) {
-    const currentLang = document.documentElement.lang;
-    const loadingText = currentLang === 'ar' ? 'جاري البحث...' : 'Searching...';
+// Search Page Specific
+function initializeSearchPage() {
+    const searchCard = document.querySelector('.search-card');
+    if (searchCard) {
+        // Add entrance animation
+        setTimeout(() => {
+            searchCard.classList.add('animate-in');
+        }, 200);
+    }
     
-    button.innerHTML = `
-        <div class="loading"></div>
-        ${loadingText}
-    `;
-    button.disabled = true;
-    button.style.cursor = 'not-allowed';
+    // Add typing animation to placeholder
+    animatePlaceholder();
 }
 
-// Setup animations and transitions
-function setupAnimations() {
-    // Intersection Observer for fade-in animations
+// Results Page Specific
+function initializeResultsPage() {
+    const studentCards = document.querySelectorAll('.student-card');
+    
+    studentCards.forEach((card, index) => {
+        // Staggered animation
+        setTimeout(() => {
+            card.classList.add('animate-in');
+        }, index * 100);
+        
+        // Enhanced hover effects
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+            this.style.boxShadow = '0 25px 50px rgba(102, 126, 234, 0.2)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = '';
+        });
+        
+        // Click animation
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.btn')) return;
+            
+            // Ripple effect
+            createRippleEffect(e, this);
+            
+            // Navigate after animation
+            setTimeout(() => {
+                const link = this.querySelector('.btn-primary');
+                if (link) link.click();
+            }, 200);
+        });
+    });
+}
+
+// Details Page Specific
+function initializeDetailsPage() {
+    // Animate progress bars and circles
+    animateProgressElements();
+    
+    // Add celebration for high scores
+    const percentage = parseFloat(document.querySelector('.percentage-main')?.textContent);
+    if (percentage >= 85) {
+        setTimeout(() => {
+            createCelebrationEffect();
+        }, 1500);
+    }
+    
+    // Print functionality
+    const printBtn = document.querySelector('[onclick="window.print()"]');
+    if (printBtn) {
+        printBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            preparePrintView();
+            setTimeout(() => window.print(), 100);
+        });
+    }
+}
+
+// Animation Functions
+function initializeAnimations() {
+    // Intersection Observer for scroll animations
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -164,131 +202,315 @@ function setupAnimations() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in');
-                observer.unobserve(entry.target);
+                entry.target.classList.add('animate-in');
             }
         });
     }, observerOptions);
     
-    // Observe elements for animation
-    const animatedElements = document.querySelectorAll('.search-section, .result-section, .error-section');
-    animatedElements.forEach(el => observer.observe(el));
-    
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
+    // Observe all animatable elements
+    document.querySelectorAll('[data-animate]').forEach(el => {
+        observer.observe(el);
     });
 }
 
-// Keyboard navigation setup
-function setupKeyboardNavigation() {
-    document.addEventListener('keydown', function(e) {
-        // Escape key - go back to search
-        if (e.key === 'Escape') {
-            const backButton = document.querySelector('.back-button');
-            if (backButton) {
-                backButton.click();
-            }
-        }
-        
-        // Enter key on language toggle
-        if (e.key === 'Enter' && e.target.classList.contains('language-toggle')) {
-            toggleLanguage();
-        }
-        
-        // Ctrl/Cmd + K - focus search input
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.focus();
-                searchInput.select();
-            }
-        }
-    });
-}
-
-// Accessibility enhancements
-function setupAccessibility() {
-    // Add ARIA labels dynamically
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        const currentLang = document.documentElement.lang;
-        const ariaLabel = currentLang === 'ar' 
-            ? 'أدخل رقم الجلوس أو اسم الطالب للبحث عن النتيجة'
-            : 'Enter seat number or student name to search for results';
-        searchInput.setAttribute('aria-label', ariaLabel);
-    }
-    
-    // Add focus indicators for keyboard navigation
-    const focusableElements = document.querySelectorAll('button, input, a, [tabindex]');
-    focusableElements.forEach(el => {
-        el.addEventListener('focus', function() {
-            this.style.outline = '2px solid var(--primary-color)';
-            this.style.outlineOffset = '2px';
-        });
-        
-        el.addEventListener('blur', function() {
-            this.style.outline = '';
-            this.style.outlineOffset = '';
-        });
-    });
-    
-    // Announce page changes for screen readers
-    announcePageChange();
-}
-
-// Announce page changes for screen readers
-function announcePageChange() {
-    const currentLang = document.documentElement.lang;
-    let announcement = '';
-    
-    if (document.querySelector('.search-section')) {
-        announcement = currentLang === 'ar' 
-            ? 'صفحة البحث عن النتائج'
-            : 'Results search page';
-    } else if (document.querySelector('.result-section')) {
-        announcement = currentLang === 'ar' 
-            ? 'صفحة عرض النتيجة'
-            : 'Result display page';
-    } else if (document.querySelector('.error-section')) {
-        announcement = currentLang === 'ar' 
-            ? 'صفحة خطأ في البحث'
-            : 'Search error page';
-    }
-    
-    if (announcement) {
-        // Create live region for screen readers
-        const liveRegion = document.createElement('div');
-        liveRegion.setAttribute('aria-live', 'polite');
-        liveRegion.setAttribute('aria-atomic', 'true');
-        liveRegion.style.cssText = `
-            position: absolute;
-            left: -10000px;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-        `;
-        liveRegion.textContent = announcement;
-        document.body.appendChild(liveRegion);
-        
-        // Remove after announcement
+function animateProgressElements() {
+    // Animate score bar
+    const scoreBar = document.querySelector('.score-fill');
+    if (scoreBar) {
+        const targetWidth = scoreBar.style.width;
+        scoreBar.style.width = '0%';
         setTimeout(() => {
-            document.body.removeChild(liveRegion);
+            scoreBar.style.width = targetWidth;
+        }, 800);
+    }
+    
+    // Animate circular progress
+    const circleProgress = document.querySelector('.circle-fill');
+    if (circleProgress) {
+        const targetDash = circleProgress.getAttribute('stroke-dasharray');
+        circleProgress.setAttribute('stroke-dasharray', '0, 100');
+        setTimeout(() => {
+            circleProgress.setAttribute('stroke-dasharray', targetDash);
         }, 1000);
     }
 }
 
-// Utility functions
+function animatePlaceholder() {
+    const searchInput = document.querySelector('#searchInput');
+    if (!searchInput) return;
+    
+    const placeholders = [
+        'رقم الجلوس أو اسم الطالب',
+        'مثال: 1001660',
+        'مثال: محمد أحمد'
+    ];
+    
+    let currentIndex = 0;
+    
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % placeholders.length;
+        searchInput.placeholder = placeholders[currentIndex];
+    }, 3000);
+}
+
+// Visual Effects
+function createRippleEffect(event, element) {
+    const ripple = document.createElement('span');
+    const rect = element.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+    
+    ripple.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
+        z-index: 1;
+    `;
+    
+    element.style.position = 'relative';
+    element.style.overflow = 'hidden';
+    element.appendChild(ripple);
+    
+    setTimeout(() => ripple.remove(), 600);
+}
+
+function createCelebrationEffect() {
+    const celebration = document.createElement('div');
+    celebration.innerHTML = '🎉🎊✨';
+    celebration.style.cssText = `
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 3rem;
+        animation: celebrate 3s ease-out forwards;
+        pointer-events: none;
+        z-index: 1000;
+        text-align: center;
+    `;
+    
+    // Add celebration keyframes if not exists
+    if (!document.querySelector('#celebration-styles')) {
+        const style = document.createElement('style');
+        style.id = 'celebration-styles';
+        style.textContent = `
+            @keyframes celebrate {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-50%) scale(0) rotate(0deg);
+                }
+                25% {
+                    opacity: 1;
+                    transform: translateX(-50%) scale(1.2) rotate(180deg);
+                }
+                50% {
+                    transform: translateX(-50%) scale(1) rotate(360deg);
+                }
+                75% {
+                    transform: translateX(-50%) scale(1.1) rotate(540deg);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateX(-50%) scale(0.8) translateY(-100px) rotate(720deg);
+                }
+            }
+            
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(celebration);
+    
+    setTimeout(() => celebration.remove(), 3000);
+}
+
+// Loading States
+function addLoadingStates() {
+    // Add loading styles if not exists
+    if (!document.querySelector('#loading-styles')) {
+        const style = document.createElement('style');
+        style.id = 'loading-styles';
+        style.textContent = `
+            .loading-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(102, 126, 234, 0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                backdrop-filter: blur(10px);
+            }
+            
+            .loading-spinner {
+                width: 60px;
+                height: 60px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-top: 4px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .btn.loading {
+                position: relative;
+                color: transparent !important;
+            }
+            
+            .btn.loading::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 20px;
+                height: 20px;
+                margin: -10px 0 0 -10px;
+                border: 2px solid transparent;
+                border-top: 2px solid currentColor;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            .language-toggle.loading {
+                opacity: 0.7;
+                transform: scale(0.95);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function showLoadingOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'loading-overlay';
+    overlay.innerHTML = '<div class="loading-spinner"></div>';
+    document.body.appendChild(overlay);
+    
+    // Remove after 10 seconds max
+    setTimeout(() => {
+        if (overlay.parentNode) {
+            overlay.remove();
+        }
+    }, 10000);
+}
+
+// Theme and Accessibility
+function initializeTheme() {
+    // Add smooth transitions to all interactive elements
+    const style = document.createElement('style');
+    style.textContent = `
+        * {
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function initializeAccessibility() {
+    // Add keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        // ESC key to go back
+        if (e.key === 'Escape') {
+            const backBtn = document.querySelector('.btn[href*="index"]');
+            if (backBtn) backBtn.click();
+        }
+        
+        // Enter key on cards
+        if (e.key === 'Enter' && e.target.classList.contains('student-card')) {
+            e.target.click();
+        }
+    });
+    
+    // Add focus indicators
+    const focusStyle = document.createElement('style');
+    focusStyle.textContent = `
+        .student-card:focus,
+        .btn:focus,
+        input:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+    `;
+    document.head.appendChild(focusStyle);
+}
+
+// Utility Functions
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: ${type === 'error' ? '#f44336' : '#4caf50'};
+        color: white;
+        border-radius: 8px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out forwards';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function preparePrintView() {
+    // Hide unnecessary elements for printing
+    const elementsToHide = document.querySelectorAll('.details-actions, .language-toggle, footer');
+    elementsToHide.forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // Restore after printing
+    window.addEventListener('afterprint', () => {
+        elementsToHide.forEach(el => {
+            el.style.display = '';
+        });
+    });
+}
+
+// Performance Optimization
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -301,42 +523,11 @@ function debounce(func, wait) {
     };
 }
 
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    }
-}
-
-// Performance monitoring
-function measurePerformance() {
-    if ('performance' in window) {
-        window.addEventListener('load', () => {
-            const perfData = performance.getEntriesByType('navigation')[0];
-            console.log('Page Load Time:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
-        });
-    }
-}
-
-// Initialize performance monitoring in development
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    measurePerformance();
-}
-
-// Export functions for testing (if needed)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        toggleLanguage,
-        setupFormValidation,
-        setupAnimations,
-        debounce,
-        throttle
-    };
-}
+// Export for global access
+window.ThanaweyaApp = {
+    showNotification,
+    createRippleEffect,
+    createCelebrationEffect,
+    showLoadingOverlay
+};
 

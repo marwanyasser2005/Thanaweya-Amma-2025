@@ -1,0 +1,852 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if error %}
+        {% if language == 'ar' %}خطأ - نتائج الثانوية العامة 2025{% else %}Error - Thanaweya Results 2025{% endif %}
+    {% elif student %}
+        {% if language == 'ar' %}نتيجة {{ student.name }} - نتائج الثانوية العامة 2025{% else %}Result for {{ student.name }} - Thanaweya Results 2025{% endif %}
+    {% else %}
+        {% if language == 'ar' %}نتائج الثانوية العامة 2025{% else %}Thanaweya Results 2025{% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="student-details-container">
+    {% if error %}
+        <!-- Error State -->
+        <div class="result-card error-card" data-aos="fade-up">
+            <div class="error-icon">
+                <svg class="icon error-icon-svg">
+                    <use href="#error-icon"></use>
+                </svg>
+            </div>
+            <h2 class="error-title">
+                {% if language == 'ar' %}
+                    عذراً، حدث خطأ
+                {% else %}
+                    Sorry, an error occurred
+                {% endif %}
+            </h2>
+            <p class="error-message">{{ error }}</p>
+            <a href="{{ url_for('index', language=language) }}" class="btn btn-secondary glass-effect">
+                <svg class="icon">
+                    <use href="#arrow-left-icon"></use>
+                </svg>
+                {% if language == 'ar' %}
+                    العودة للبحث
+                {% else %}
+                    Back to Search
+                {% endif %}
+            </a>
+        </div>
+    {% elif student %}
+        <!-- Student Details -->
+        <div class="student-header" data-aos="fade-down">
+            <div class="student-avatar-large">
+                <svg class="icon">
+                    <use href="#user-icon"></use>
+                </svg>
+            </div>
+            <div class="student-header-info">
+                <h1 class="student-name-large">{{ student.name }}</h1>
+                <p class="student-seat-large">
+                    <svg class="icon">
+                        <use href="#hash-icon"></use>
+                    </svg>
+                    {% if language == 'ar' %}
+                        رقم الجلوس: {{ student.seating_no }}
+                    {% else %}
+                        Seat Number: {{ student.seating_no }}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" data-aos="fade-up" data-aos-delay="200">
+            <div class="success-icon">
+                <svg class="icon">
+                    <use href="#check-circle-icon"></use>
+                </svg>
+            </div>
+            <h2 class="success-title">
+                {% if language == 'ar' %}
+                    🎉 تم العثور على النتيجة
+                {% else %}
+                    🎉 Result Found
+                {% endif %}
+            </h2>
+            <p class="success-subtitle">
+                {% if language == 'ar' %}
+                    إليك تفاصيل النتيجة المطلوبة
+                {% else %}
+                    Here are the requested result details
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Results Grid -->
+        <div class="details-grid" data-aos="fade-up" data-aos-delay="400">
+            <!-- Student Info Card -->
+            <div class="detail-card student-info-card">
+                <div class="card-header">
+                    <svg class="icon">
+                        <use href="#user-icon"></use>
+                    </svg>
+                    <h3>
+                        {% if language == 'ar' %}معلومات الطالب{% else %}Student Information{% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <span class="info-label">
+                            {% if language == 'ar' %}اسم الطالب{% else %}Student Name{% endif %}
+                        </span>
+                        <span class="info-value">{{ student.name }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">
+                            {% if language == 'ar' %}رقم الجلوس{% else %}Seat Number{% endif %}
+                        </span>
+                        <span class="info-value">{{ student.seating_no }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Score Card -->
+            <div class="detail-card score-card">
+                <div class="card-header">
+                    <svg class="icon">
+                        <use href="#trophy-icon"></use>
+                    </svg>
+                    <h3>
+                        {% if language == 'ar' %}الدرجة الإجمالية{% else %}Total Score{% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="score-display">
+                        <span class="score-main">{{ student.total }}</span>
+                        <span class="score-max">/ {{ student.max_total }}</span>
+                    </div>
+                    <div class="score-bar">
+                        <div class="score-fill" style="width: {{ student.percentage }}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Percentage Card -->
+            <div class="detail-card percentage-card">
+                <div class="card-header">
+                    <svg class="icon">
+                        <use href="#percent-icon"></use>
+                    </svg>
+                    <h3>
+                        {% if language == 'ar' %}النسبة المئوية{% else %}Percentage{% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="percentage-display">
+                        <span class="percentage-main">{{ student.percentage }}%</span>
+                    </div>
+                    <div class="percentage-circle">
+                        <svg class="circle-progress" viewBox="0 0 36 36">
+                            <path class="circle-bg" d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="circle-fill" stroke-dasharray="{{ student.percentage }}, 100" d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grade Card -->
+            <div class="detail-card grade-card grade-{{ student.grade_color }}">
+                <div class="card-header">
+                    <svg class="icon">
+                        <use href="#award-icon"></use>
+                    </svg>
+                    <h3>
+                        {% if language == 'ar' %}التقدير{% else %}Grade{% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="grade-display">
+                        <span class="grade-text">{{ student.grade }}</span>
+                    </div>
+                    <div class="grade-badge">
+                        <svg class="icon">
+                            <use href="#star-icon"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="details-actions" data-aos="fade-up" data-aos-delay="600">
+            <a href="{{ url_for('index', language=language) }}" class="btn btn-secondary glass-effect">
+                <svg class="icon">
+                    <use href="#search-icon"></use>
+                </svg>
+                {% if language == 'ar' %}
+                    بحث جديد
+                {% else %}
+                    New Search
+                {% endif %}
+            </a>
+            <button onclick="window.print()" class="btn btn-primary glass-effect">
+                <svg class="icon">
+                    <use href="#printer-icon"></use>
+                </svg>
+                {% if language == 'ar' %}
+                    طباعة النتيجة
+                {% else %}
+                    Print Result
+                {% endif %}
+            </button>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+/* Student Details Page Styles */
+.student-details-container {
+    min-height: calc(100vh - 200px);
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Student Header */
+.student-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3rem;
+    text-align: center;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.student-avatar-large {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 40px rgba(var(--primary-color), 0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+.student-avatar-large .icon {
+    width: 60px;
+    height: 60px;
+    color: white;
+}
+
+.student-header-info {
+    text-align: center;
+}
+
+.student-name-large {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: var(--text-color-light);
+}
+
+html[data-theme="dark"] .student-name-large {
+    color: var(--text-color-dark);
+}
+
+.student-seat-large {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    opacity: 0.8;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.student-seat-large .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+}
+
+[dir="rtl"] .student-seat-large .icon {
+    margin-right: 0;
+    margin-left: 0.5rem;
+}
+
+/* Success Message */
+.success-message {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: rgba(var(--success-color), 0.1);
+    border: 1px solid rgba(var(--success-color), 0.2);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.success-icon {
+    margin-bottom: 1rem;
+}
+
+.success-icon .icon {
+    width: 48px;
+    height: 48px;
+    color: var(--success-color);
+}
+
+.success-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--success-color);
+}
+
+.success-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* Details Grid */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Detail Cards */
+.detail-card {
+    background: var(--glass-bg-light);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--input-border-light);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+html[data-theme="dark"] .detail-card {
+    background: var(--glass-bg-dark);
+    border-color: var(--input-border-dark);
+}
+
+.detail-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.detail-card:hover::before {
+    transform: scaleX(1);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.75rem;
+    color: var(--primary-color);
+}
+
+[dir="rtl"] .card-header .icon {
+    margin-right: 0;
+    margin-left: 0.75rem;
+}
+
+.card-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color-light);
+}
+
+html[data-theme="dark"] .card-header h3 {
+    color: var(--text-color-dark);
+}
+
+/* Student Info Card */
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--input-border-light);
+}
+
+html[data-theme="dark"] .info-item {
+    border-bottom-color: var(--input-border-dark);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 500;
+    opacity: 0.8;
+    color: var(--text-light);
+}
+
+.info-value {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+html[data-theme="dark"] .info-value {
+    color: var(--accent-secondary);
+}
+
+/* Score Card */
+.score-display {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.score-main {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+html[data-theme="dark"] .score-main {
+    color: var(--accent-secondary);
+}
+
+.score-max {
+    font-size: 1.5rem;
+    opacity: 0.6;
+    color: var(--text-light);
+}
+
+.score-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+/* Percentage Card */
+.percentage-display {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.percentage-main {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--secondary-color);
+}
+
+html[data-theme="dark"] .percentage-main {
+    color: var(--accent-color);
+}
+
+.percentage-circle {
+    display: flex;
+    justify-content: center;
+}
+
+.circle-progress {
+    width: 80px;
+    height: 80px;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 2;
+}
+
+.circle-fill {
+    fill: none;
+    stroke: var(--secondary-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+    animation: progress 1s ease-in-out;
+}
+
+html[data-theme="dark"] .circle-fill {
+    stroke: var(--accent-color);
+}
+
+/* Grade Card */
+.grade-display {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.grade-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.grade-badge {
+    text-align: center;
+}
+
+.grade-badge .icon {
+    width: 40px;
+    height: 40px;
+}
+
+/* Grade Colors */
+.grade-success {
+    border-color: rgba(var(--success-color), 0.3);
+}
+
+.grade-success .grade-text,
+.grade-success .grade-badge .icon {
+    color: var(--success-color);
+}
+
+.grade-info {
+    border-color: rgba(var(--info-color), 0.3);
+}
+
+.grade-info .grade-text,
+.grade-info .grade-badge .icon {
+    color: var(--info-color);
+}
+
+.grade-warning {
+    border-color: rgba(var(--warning-color), 0.3);
+}
+
+.grade-warning .grade-text,
+.grade-warning .grade-badge .icon {
+    color: var(--warning-color);
+}
+
+.grade-secondary {
+    border-color: rgba(158, 158, 158, 0.3);
+}
+
+.grade-secondary .grade-text,
+.grade-secondary .grade-badge .icon {
+    color: #9e9e9e;
+}
+
+.grade-error {
+    border-color: rgba(var(--error-color), 0.3);
+}
+
+.grade-error .grade-text,
+.grade-error .grade-badge .icon {
+    color: var(--error-color);
+}
+
+/* Actions */
+.details-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+/* Buttons */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    gap: 0.75rem;
+    min-width: 200px;
+    background: rgba(74, 46, 122, 0.8); /* New darker gradient base */
+    border: 2px solid rgba(74, 46, 122, 0.3);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="dark"] .btn {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(107, 114, 128, 0.3);
+    color: var(--text-color-dark);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn .icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover .icon {
+    transform: translateX(4px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4A2E7A, #6B48FF); /* New darker gradient */
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(107, 72, 255, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, color-mix(in srgb, #4A2E7A 80%, white), color-mix(in srgb, #6B48FF 80%, white));
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(107, 72, 255, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: #4A2E7A; /* Match the new primary color */
+    border: 2px solid rgba(74, 46, 122, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #6B48FF; /* Match the new gradient end */
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(107, 72, 255, 0.1);
+}
+
+.glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-effect:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+html[data-theme="dark"] .glass-effect {
+    background: rgba(15, 23, 42, 0.5);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme="dark"] .glass-effect:hover {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .student-details-container {
+        padding: 1rem 0.5rem;
+    }
+    
+    .student-header {
+        margin-bottom: 2rem;
+    }
+    
+    .student-name-large {
+        font-size: 2rem;
+    }
+    
+    .student-avatar-large {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .student-avatar-large .icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .details-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .details-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .btn {
+        font-size: 1.1rem;
+        padding: 0.9rem 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .student-name-large {
+        font-size: 1.75rem;
+    }
+    
+    .score-main {
+        font-size: 2.5rem;
+    }
+    
+    .percentage-main {
+        font-size: 2rem;
+    }
+    
+    .btn {
+        font-size: 1rem;
+        padding: 0.75rem 1.2rem;
+        min-width: 160px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .student-details-container {
+        padding: 1rem;
+    }
+    
+    .details-actions {
+        display: none;
+    }
+    
+    .detail-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .btn {
+        display: none;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 50
+        });
+    }
+    
+    const scoreBar = document.querySelector('.score-fill');
+    if (scoreBar) {
+        setTimeout(() => {
+            scoreBar.style.width = scoreBar.style.width;
+        }, 500);
+    }
+    
+    const circleProgress = document.querySelector('.circle-fill');
+    if (circleProgress) {
+        setTimeout(() => {
+            circleProgress.style.strokeDasharray = circleProgress.getAttribute('stroke-dasharray');
+        }, 800);
+    }
+    
+    const percentage = parseFloat(document.querySelector('.percentage-main')?.textContent);
+    if (percentage >= 85) {
+        setTimeout(() => {
+            createCelebration();
+        }, 1500);
+    }
+});
+
+function createCelebration() {
+    const celebration = document.createElement('div');
+    celebration.innerHTML = '🎉';
+    celebration.style.cssText = `
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 3rem;
+        animation: celebrate 2s ease-out forwards;
+        pointer-events: none;
+        z-index: 1000;
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes celebrate {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) scale(1) translateY(-50px);
+            }
+        }
+    `;
+    
+    document.head.appendChild(style);
+    document.body.appendChild(celebration);
+    
+    setTimeout(() => {
+        celebration.remove();
+        style.remove();
+    }, 2000);
+}
+</script>
+{% endblock %}

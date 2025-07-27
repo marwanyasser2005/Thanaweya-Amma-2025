@@ -1,136 +1,125 @@
 {% extends "base.html" %}
 
 {% block title %}
-    {% if language == 'ar' %}
-        {% if error %}
-            خطأ في البحث - نتائج الثانوية العامة 2025
-        {% else %}
-            نتيجة {{ name }} - نتائج الثانوية العامة 2025
-        {% endif %}
+    {% if error %}
+        {% if language == 'ar' %}خطأ في البحث - نتائج الثانوية العامة 2025{% else %}Search Error - Thanaweya Results 2025{% endif %}
+    {% elif results %}
+        {% if language == 'ar' %}نتائج البحث عن "{{ search_term }}" - نتائج الثانوية العامة 2025{% else %}Search Results for "{{ search_term }}" - Thanaweya Results 2025{% endif %}
     {% else %}
-        {% if error %}
-            Search Error - Thanaweya Results 2025
-        {% else %}
-            Result for {{ name }} - Thanaweya Results 2025
-        {% endif %}
+        {% if language == 'ar' %}نتائج الثانوية العامة 2025{% else %}Thanaweya Results 2025{% endif %}
     {% endif %}
 {% endblock %}
 
 {% block content %}
-{% if error %}
-    <!-- Error Section -->
-    <div class="error-section">
-        <h2 class="error-title">
-            <svg class="icon icon-lg">
-                <use href="#error-icon"></use>
-            </svg>
-            {% if language == 'ar' %}
-                عذراً، حدث خطأ
-            {% else %}
-                Sorry, an error occurred
-            {% endif %}
-        </h2>
-        <p class="error-message">{{ error }}</p>
-        <a href="{{ url_for('index', language=language) }}" class="back-button">
-            <svg class="icon">
-                <use href="#back-icon"></use>
-            </svg>
-            {% if language == 'ar' %}
-                العودة للبحث
-            {% else %}
-                Back to Search
-            {% endif %}
-        </a>
-    </div>
-{% else %}
-    <!-- Success Result Section -->
-    <div class="result-section">
-        <div class="result-header">
-            <h2 class="result-title">
-                <svg class="icon icon-lg">
-                    <use href="#success-icon"></use>
+<div class="result-container">
+    {% if error %}
+        <!-- Error State -->
+        <div class="result-card error-card" data-aos="fade-up">
+            <div class="error-icon">
+                <svg class="icon error-icon-svg">
+                    <use href="#error-icon"></use>
                 </svg>
+            </div>
+            <h2 class="error-title">
                 {% if language == 'ar' %}
-                    تم العثور على النتيجة
+                    عذراً، حدث خطأ
                 {% else %}
-                    Result Found
+                    Sorry, an error occurred
                 {% endif %}
             </h2>
-            <p class="result-subtitle">
+            <p class="error-message">{{ error }}</p>
+            <a href="{{ url_for('index', language=language) }}" class="btn btn-primary glass-effect">
+                <svg class="icon">
+                    <use href="#arrow-left-icon"></use>
+                </svg>
                 {% if language == 'ar' %}
-                    إليك تفاصيل النتيجة المطلوبة
+                    العودة للبحث
                 {% else %}
-                    Here are the requested result details
+                    Back to Search
+                {% endif %}
+            </a>
+        </div>
+    {% elif results %}
+        <!-- Multiple Results State -->
+        <div class="results-header" data-aos="fade-down">
+            <h2 class="results-title">
+                {% if language == 'ar' %}
+                    نتائج البحث عن "{{ search_term }}"
+                {% else %}
+                    Search Results for "{{ search_term }}"
+                {% endif %}
+            </h2>
+            <p class="results-subtitle">
+                {% if language == 'ar' %}
+                    تم العثور على {{ results|length }} نتيجة. انقر على اسمك للحصول على التفاصيل الكاملة
+                {% else %}
+                    Found {{ results|length }} result(s). Click on your name to get full details
                 {% endif %}
             </p>
         </div>
-        
-        <div class="result-card">
-            <!-- Student Name -->
-            <div class="result-item">
-                <div class="result-label">
-                    <svg class="icon">
-                        <use href="#user-icon"></use>
-                    </svg>
-                    {% if language == 'ar' %}
-                        اسم الطالب
-                    {% else %}
-                        Student Name
-                    {% endif %}
+
+        <div class="results-grid">
+            {% for student in results %}
+            <div class="student-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                <div class="student-card-header">
+                    <div class="student-avatar">
+                        <svg class="icon">
+                            <use href="#user-icon"></use>
+                        </svg>
+                    </div>
+                    <div class="student-info">
+                        <h3 class="student-name">{{ student.name }}</h3>
+                        <p class="student-seat">
+                            <svg class="icon">
+                                <use href="#hash-icon"></use>
+                            </svg>
+                            {% if language == 'ar' %}
+                                رقم الجلوس: {{ student.seating_no }}
+                            {% else %}
+                                Seat Number: {{ student.seating_no }}
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
-                <div class="result-value name">{{ name }}</div>
-            </div>
-            
-            <!-- Seat Number -->
-            <div class="result-item">
-                <div class="result-label">
-                    <svg class="icon">
-                        <use href="#number-icon"></use>
-                    </svg>
-                    {% if language == 'ar' %}
-                        رقم الجلوس
-                    {% else %}
-                        Seat Number
-                    {% endif %}
+                
+                <div class="student-card-body">
+                    <div class="grade-preview">
+                        <div class="grade-item">
+                            <span class="grade-label">
+                                {% if language == 'ar' %}الدرجة{% else %}Score{% endif %}
+                            </span>
+                            <span class="grade-value">{{ student.total }}/320</span>
+                        </div>
+                        <div class="grade-item">
+                            <span class="grade-label">
+                                {% if language == 'ar' %}النسبة{% else %}Percentage{% endif %}
+                            </span>
+                            <span class="grade-value percentage">{{ student.percentage }}%</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="result-value seat">{{ seating_no }}</div>
-            </div>
-            
-            <!-- Total Degree -->
-            <div class="result-item">
-                <div class="result-label">
-                    <svg class="icon">
-                        <use href="#trophy-icon"></use>
-                    </svg>
-                    {% if language == 'ar' %}
-                        الدرجة الإجمالية
-                    {% else %}
-                        Total Degree
-                    {% endif %}
+                
+                <div class="student-card-footer">
+                    <a href="{{ url_for('student_details', language=language, seating_no=student.seating_no) }}" 
+                       class="btn btn-primary btn-full glass-effect">
+                        <svg class="icon">
+                            <use href="#eye-icon"></use>
+                        </svg>
+                        {% if language == 'ar' %}
+                            عرض التفاصيل الكاملة
+                        {% else %}
+                            View Full Details
+                        {% endif %}
+                    </a>
                 </div>
-                <div class="result-value total">{{ total }} / 320</div>
             </div>
-            
-            <!-- Percentage -->
-            <div class="result-item">
-                <div class="result-label">
-                    <svg class="icon">
-                        <use href="#percentage-icon"></use>
-                    </svg>
-                    {% if language == 'ar' %}
-                        النسبة المئوية
-                    {% else %}
-                        Percentage
-                    {% endif %}
-                </div>
-                <div class="result-value percentage">{{ percentage }}%</div>
-            </div>
+            {% endfor %}
         </div>
-        
-        <div style="text-align: center; margin-top: 2rem;">
-            <a href="{{ url_for('index', language=language) }}" class="back-button">
+
+        <div class="results-actions" data-aos="fade-up">
+            <a href="{{ url_for('index', language=language) }}" class="btn btn-secondary glass-effect">
                 <svg class="icon">
-                    <use href="#back-icon"></use>
+                    <use href="#search-icon"></use>
                 </svg>
                 {% if language == 'ar' %}
                     بحث جديد
@@ -139,30 +128,472 @@
                 {% endif %}
             </a>
         </div>
-    </div>
-{% endif %}
+    {% endif %}
+</div>
 
-<script>
-// Add celebration animation for successful results
-{% if not error %}
-document.addEventListener('DOMContentLoaded', function() {
-    // Add confetti effect or celebration animation here if needed
-    const resultSection = document.querySelector('.result-section');
-    resultSection.style.animation = 'slideInUp 0.6s ease, pulse 2s ease 0.6s';
-});
-{% endif %}
-
-// Add print functionality
-function printResult() {
-    window.print();
+<style>
+/* Results Page Specific Styles */
+.result-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
 }
 
-// Add keyboard navigation
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        window.location.href = "{{ url_for('index', language=language) }}";
+/* Error State */
+.error-card {
+    background: var(--glass-bg-light);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--input-border-light);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease, border 0.3s ease;
+}
+
+html[data-theme="dark"] .error-card {
+    background: var(--glass-bg-dark);
+    border-color: var(--input-border-dark);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.error-icon {
+    margin-bottom: 1.5rem;
+}
+
+.error-icon-svg {
+    width: 64px;
+    height: 64px;
+    color: var(--error-color);
+}
+
+.error-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--error-color);
+}
+
+.error-message {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+    color: var(--text-light);
+}
+
+/* Results Header */
+.results-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+.results-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: var(--text-color-light);
+}
+
+html[data-theme="dark"] .results-title {
+    color: var(--text-color-dark);
+}
+
+.results-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--text-light);
+}
+
+/* Results Grid */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    margin-bottom: 3rem;
+}
+
+/* Student Card */
+.student-card {
+    background: var(--glass-bg-light);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--input-border-light);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+html[data-theme="dark"] .student-card {
+    background: var(--glass-bg-dark);
+    border-color: var(--input-border-dark);
+}
+
+.student-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.student-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    border-color: rgba(var(--primary-color), 0.3);
+}
+
+.student-card:hover::before {
+    transform: scaleX(1);
+}
+
+.student-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.student-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+[dir="rtl"] .student-avatar {
+    margin-right: 0;
+    margin-left: 1rem;
+}
+
+.student-avatar .icon {
+    width: 30px;
+    height: 30px;
+    color: white;
+}
+
+.student-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.student-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-color-light);
+    word-wrap: break-word;
+}
+
+html[data-theme="dark"] .student-name {
+    color: var(--text-color-dark);
+}
+
+.student-seat {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    opacity: 0.7;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.student-seat .icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 0.5rem;
+}
+
+[dir="rtl"] .student-seat .icon {
+    margin-right: 0;
+    margin-left: 0.5rem;
+}
+
+/* Grade Preview */
+.grade-preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.grade-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(var(--glass-bg-light), 0.5);
+    border-radius: 12px;
+    border: 1px solid var(--input-border-light);
+    transition: background 0.3s ease;
+}
+
+html[data-theme="dark"] .grade-item {
+    background: rgba(var(--glass-bg-dark), 0.5);
+    border-color: var(--input-border-dark);
+}
+
+.grade-label {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    color: var(--text-light);
+}
+
+.grade-value {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+html[data-theme="dark"] .grade-value {
+    color: var(--accent-secondary);
+}
+
+.grade-value.percentage {
+    color: var(--secondary-color);
+}
+
+html[data-theme="dark"] .grade-value.percentage {
+    color: var(--accent-color);
+}
+
+/* Student Card Footer */
+.student-card-footer {
+    margin-top: 1.5rem;
+}
+
+.btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Buttons */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    gap: 0.5rem;
+    min-width: 180px;
+    background: rgba(74, 46, 122, 0.8); /* New darker gradient base */
+    border: 2px solid rgba(74, 46, 122, 0.3);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="dark"] .btn {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(107, 114, 128, 0.3);
+    color: var(--text-color-dark);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn .icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover .icon {
+    transform: translateX(2px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4A2E7A, #6B48FF); /* New darker gradient */
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(107, 72, 255, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, color-mix(in srgb, #4A2E7A 80%, white), color-mix(in srgb, #6B48FF 80%, white));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 72, 255, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: #4A2E7A; /* Match the new primary color */
+    border: 2px solid rgba(74, 46, 122, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #6B48FF; /* Match the new gradient end */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(107, 72, 255, 0.2);
+}
+
+.glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-effect:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Results Actions */
+.results-actions {
+    text-align: center;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
+    
+    .results-title {
+        font-size: 2rem;
+    }
+    
+    .student-card {
+        padding: 1.25rem;
+    }
+    
+    .student-card-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .student-avatar {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    [dir="rtl"] .student-avatar {
+        margin-left: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .grade-preview {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .btn {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .result-container {
+        padding: 1rem 0.5rem;
+    }
+    
+    .results-title {
+        font-size: 1.75rem;
+    }
+    
+    .results-subtitle {
+        font-size: 1rem;
+    }
+    
+    .btn {
+        font-size: 0.95rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Loading Animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading .student-card {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* AOS Animation Overrides */
+[data-aos="fade-up"] {
+    transform: translate3d(0, 40px, 0);
+    opacity: 0;
+}
+
+[data-aos="fade-up"].aos-animate {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+}
+
+[data-aos="fade-down"] {
+    transform: translate3d(0, -40px, 0);
+    opacity: 0;
+}
+
+[data-aos="fade-down"].aos-animate {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 50
+        });
+    }
+    
+    const studentCards = document.querySelectorAll('.student-card');
+    studentCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.btn')) return;
+            const link = card.querySelector('.btn-primary');
+            if (link) link.click();
+        });
+        
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
 });
 </script>
 {% endblock %}
-

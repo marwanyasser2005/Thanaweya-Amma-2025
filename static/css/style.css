@@ -6,43 +6,111 @@
 
 /* CSS Variables for Colors */
 :root {
-  --primary-color: #667eea;
-  --secondary-color: #764ba2;
-  --accent-color: #f093fb;
-  --accent-secondary: #f5576c;
-  --background-color: #ffffff;
-  --text-color: #2d3748;
-  --text-light: #718096;
-  --success-color: #48bb78;
-  --error-color: #f56565;
-  --warning-color: #ed8936;
-  --info-color: #4299e1;
-  
-  /* Gradients */
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
-  
-  /* Shadows */
+  /* Light Theme */
+  --primary-color-light: #667eea;
+  --secondary-color-light: #764ba2;
+  --accent-color-light: #f093fb;
+  --accent-secondary-light: #f5576c;
+  --background-color-light: #ffffff;
+  --text-color-light: #2d3748;
+  --text-light-light: #718096;
+  --success-color-light: #48bb78;
+  --error-color-light: #f56565;
+  --warning-color-light: #ed8936;
+  --info-color-light: #4299e1;
+  --card-bg-light: rgba(255, 255, 255, 0.9);
+  --card-border-light: rgba(255, 255, 255, 0.3);
+  --header-bg-light: rgba(255, 255, 255, 0.1);
+  --header-border-light: rgba(255, 255, 255, 0.2);
+  --input-bg-light: rgba(255, 255, 255, 0.9);
+  --footer-bg-light: rgba(255, 255, 255, 0.1);
+  --social-bg-light: rgba(255, 255, 255, 0.2);
+
+  /* Dark Theme */
+  --primary-color-dark: #7f9cf5;
+  --secondary-color-dark: #9f7aea;
+  --accent-color-dark: #f687b3;
+  --accent-secondary-dark: #f56565;
+  --background-color-dark: #1a202c;
+  --text-color-dark: #e2e8f0;
+  --text-light-dark: #a0aec0;
+  --success-color-dark: #68d391;
+  --error-color-dark: #fc8181;
+  --warning-color-dark: #f6ad55;
+  --info-color-dark: #63b3ed;
+  --card-bg-dark: rgba(45, 55, 72, 0.9);
+  --card-border-dark: rgba(160, 174, 192, 0.3);
+  --header-bg-dark: rgba(45, 55, 72, 0.9);
+  --header-border-dark: rgba(160, 174, 192, 0.2);
+  --input-bg-dark: rgba(45, 55, 72, 0.9);
+  --footer-bg-dark: rgba(45, 55, 72, 0.9);
+  --social-bg-dark: rgba(160, 174, 192, 0.2);
+
+  /* Theme-agnostic variables */
   --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
   --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
   --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
   --shadow-xl: 0 20px 25px rgba(0,0,0,0.1);
   --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
-  
-  /* Border Radius */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
-  
-  /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
+
+  /* Default to light theme */
+  --primary-color: var(--primary-color-light);
+  --secondary-color: var(--secondary-color-light);
+  --accent-color: var(--accent-color-light);
+  --accent-secondary: var(--accent-secondary-light);
+  --background-color: var(--background-color-light);
+  --text-color: var(--text-color-light);
+  --text-light: var(--text-light-light);
+  --success-color: var(--success-color-light);
+  --error-color: var(--error-color-light);
+  --warning-color: var(--warning-color-light);
+  --info-color: var(--info-color-light);
+  --card-bg: var(--card-bg-light);
+  --card-border: var(--card-border-light);
+  --header-bg: var(--header-bg-light);
+  --header-border: var(--header-border-light);
+  --input-bg: var(--input-bg-light);
+  --footer-bg: var(--footer-bg-light);
+  --social-bg: var(--social-bg-light);
+  --primary-gradient: linear-gradient(135deg, var(--primary-color-light) 0%, var(--secondary-color-light) 100%);
+  --accent-gradient: linear-gradient(135deg, var(--accent-color-light) 0%, var(--accent-secondary-light) 100%);
+  --background-gradient: linear-gradient(135deg, var(--primary-color-light) 0%, var(--secondary-color-light) 100%);
+  --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --primary-color: var(--primary-color-dark);
+  --secondary-color: var(--secondary-color-dark);
+  --accent-color: var(--accent-color-dark);
+  --accent-secondary: var(--accent-secondary-dark);
+  --background-color: var(--background-color-dark);
+  --text-color: var(--text-color-dark);
+  --text-light: var(--text-light-dark);
+  --success-color: var(--success-color-dark);
+  --error-color: var(--error-color-dark);
+  --warning-color: var(--warning-color-dark);
+  --info-color: var(--info-color-dark);
+  --card-bg: var(--card-bg-dark);
+  --card-border: var(--card-border-dark);
+  --header-bg: var(--header-bg-dark);
+  --header-border: var(--header-border-dark);
+  --input-bg: var(--input-bg-dark);
+  --footer-bg: var(--footer-bg-dark);
+  --social-bg: var(--social-bg-dark);
+  --primary-gradient: linear-gradient(135deg, var(--primary-color-dark) 0%, var(--secondary-color-dark) 100%);
+  --accent-gradient: linear-gradient(135deg, var(--accent-color-dark) 0%, var(--accent-secondary-dark) 100%);
+  --background-gradient: linear-gradient(135deg, var(--primary-color-dark) 0%, var(--secondary-color-dark) 100%);
+  --card-gradient: linear-gradient(145deg, rgba(45,55,72,0.9) 0%, rgba(45,55,72,0.7) 100%);
 }
 
 /* Reset and Base Styles */
@@ -89,9 +157,9 @@ body[lang="en"] {
 
 /* Header Styles */
 .header {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--header-bg);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--header-border);
   padding: 1rem 0;
   position: sticky;
   top: 0;
@@ -135,14 +203,15 @@ body[lang="en"] {
 .site-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-color);
   text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-.language-toggle {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+.language-toggle,
+.theme-toggle {
+  background: var(--social-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-color);
   padding: 0.5rem 1rem;
   border-radius: var(--radius-full);
   cursor: pointer;
@@ -154,8 +223,9 @@ body[lang="en"] {
   backdrop-filter: blur(10px);
 }
 
-.language-toggle:hover {
-  background: rgba(255, 255, 255, 0.3);
+.language-toggle:hover,
+.theme-toggle:hover {
+  background: var(--card-bg);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
@@ -177,7 +247,7 @@ body[lang="en"] {
   border-radius: var(--radius-2xl);
   padding: 3rem;
   box-shadow: var(--shadow-2xl);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--card-border);
   max-width: 500px;
   width: 100%;
   text-align: center;
@@ -192,7 +262,7 @@ body[lang="en"] {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.1), transparent);
+  background: conic-gradient(from 0deg, transparent, var(--card-bg), transparent);
   animation: rotate 10s linear infinite;
   z-index: -1;
 }
@@ -250,13 +320,14 @@ body[lang="en"] {
 .search-input {
   width: 100%;
   padding: 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--card-border);
   border-radius: var(--radius-xl);
   font-size: 1rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--input-bg);
   backdrop-filter: blur(10px);
   transition: var(--transition-normal);
   outline: none;
+  color: var(--text-color);
 }
 
 [dir="rtl"] .search-input {
@@ -328,7 +399,7 @@ body[lang="en"] {
   border-radius: var(--radius-2xl);
   padding: 2rem;
   box-shadow: var(--shadow-2xl);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--card-border);
   max-width: 600px;
   width: 100%;
   margin: 2rem auto;
@@ -368,11 +439,11 @@ body[lang="en"] {
 }
 
 .result-card {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--card-bg);
   border-radius: var(--radius-xl);
   padding: 2rem;
   box-shadow: var(--shadow-md);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--card-border);
 }
 
 .result-item {
@@ -423,7 +494,7 @@ body[lang="en"] {
   border-radius: var(--radius-2xl);
   padding: 2rem;
   box-shadow: var(--shadow-2xl);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--card-border);
   max-width: 500px;
   width: 100%;
   margin: 2rem auto;
@@ -479,12 +550,12 @@ body[lang="en"] {
 
 /* Footer */
 .footer {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--footer-bg);
   backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--header-border);
   padding: 2rem 0;
   text-align: center;
-  color: white;
+  color: var(--text-color);
 }
 
 .footer-content {
@@ -511,16 +582,16 @@ body[lang="en"] {
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--social-bg);
   border-radius: var(--radius-full);
-  color: white;
+  color: var(--text-color);
   text-decoration: none;
   transition: var(--transition-normal);
   backdrop-filter: blur(10px);
 }
 
 .social-link:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--card-bg);
   transform: translateY(-3px) scale(1.1);
   box-shadow: var(--shadow-lg);
 }
@@ -636,9 +707,9 @@ body[lang="en"] {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 3px solid rgba(255,255,255,.3);
+  border: 3px solid var(--card-border);
   border-radius: 50%;
-  border-top-color: #fff;
+  border-top-color: var(--text-color);
   animation: spin 1s ease-in-out infinite;
 }
 
@@ -667,7 +738,7 @@ body[lang="en"] {
 
 /* Print Styles */
 @media print {
-  .header, .footer, .language-toggle, .search-button, .back-button {
+  .header, .footer, .language-toggle, .theme-toggle, .search-button, .back-button {
     display: none;
   }
   
@@ -682,4 +753,3 @@ body[lang="en"] {
     border: 1px solid #ccc;
   }
 }
-

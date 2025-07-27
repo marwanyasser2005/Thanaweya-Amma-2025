@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ language }}" dir="{{ 'rtl' if language == 'ar' else 'ltr' }}">
+<html lang="{{ language }}" dir="{{ 'rtl' if language == 'ar' else 'ltr' }}" class="scroll-smooth" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="var(--primary-color)">
     <title>{% block title %}نتائج الثانوية العامة 2025 - Thanaweya Results 2025{% endblock %}</title>
     
     <!-- Meta Tags -->
@@ -14,83 +15,575 @@
     <meta property="og:title" content="{% if language == 'ar' %}نتائج الثانوية العامة 2025{% else %}Thanaweya Results 2025{% endif %}">
     <meta property="og:description" content="{% if language == 'ar' %}ابحث عن نتيجة الثانوية العامة 2025 بسهولة{% else %}Search for Thanaweya 2025 results easily{% endif %}">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ url_for('static', filename='images/thanaweya-logo.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     
     <!-- Additional CSS -->
     {% block extra_css %}{% endblock %}
+    <style>
+        :root {
+            --primary-color: #6b48ff;
+            --secondary-color: #ff6b81;
+            --accent-color: #ffd700;
+            --accent-secondary: #00c4cc;
+            --background-color-light: #ffffff;
+            --background-color-dark: #0a192f;
+            --text-color-light: #1a1a2e; /* Darker text for better contrast */
+            --text-color-dark: #e6e6e6;
+            --text-light: #4a5568; /* Slightly darker for consistency */
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --info-color: #3498db;
+            --input-bg-light: rgba(255, 255, 255, 0.95);
+            --input-bg-dark: rgba(15, 23, 42, 0.95);
+            --input-text-light: #1a1a2e; /* Darker text for inputs */
+            --input-text-dark: #e6e6e6;
+            --input-placeholder-light: #4a5568;
+            --input-placeholder-dark: #a0aec0;
+            --input-border-light: rgba(107, 114, 128, 0.3); /* Darker border */
+            --input-border-dark: rgba(107, 114, 128, 0.3);
+            --input-focus-ring: rgba(107, 72, 255, 0.5);
+            --gradient-start-light: #e0f7fa;
+            --gradient-mid-light: #fff3e0;
+            --gradient-end-light: #f3e5f5;
+            --gradient-start-dark: #1e3a8a;
+            --gradient-mid-dark: #4b1e9e;
+            --gradient-end-dark: #6b21a8;
+            --glass-bg-light: rgba(255, 255, 255, 0.15);
+            --glass-bg-dark: rgba(15, 23, 42, 0.4);
+            --glass-blur: 20px;
+        }
+
+        body {
+            color: var(--text-color-light);
+            background: linear-gradient(135deg, var(--gradient-start-light), var(--gradient-mid-light), var(--gradient-end-light));
+            background-attachment: fixed;
+            transition: color 0.5s ease, background 0.5s ease;
+            overflow-x: hidden;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        html[data-theme="dark"] body {
+            color: var(--text-color-dark);
+            background: linear-gradient(135deg, var(--gradient-start-dark), var(--gradient-mid-dark), var(--gradient-end-dark));
+            background-attachment: fixed;
+        }
+
+        .header .site-title, .footer-content .bio-name, .footer-content .footer-text, .footer-content .bio-description {
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+        }
+
+        html[data-theme="dark"] .header .site-title {
+            color: var(--text-color-dark);
+            text-shadow: 0 0 10px rgba(var(--accent-color), 0.3);
+        }
+
+        html[data-theme="dark"] .footer-content .bio-name {
+            color: var(--text-color-dark);
+            text-shadow: 0 0 5px rgba(var(--primary-color), 0.2);
+        }
+
+        html[data-theme="dark"] .footer-content .bio-description {
+            color: var(--text-light);
+        }
+
+        html[data-theme="dark"] .footer-content .footer-text {
+            color: var(--text-light);
+        }
+
+        .language-toggle, .header .site-title {
+            color: var(--text-color-light);
+            text-shadow: 0 0 5px rgba(var(--primary-color), 0.1);
+        }
+
+        html[data-theme="dark"] .language-toggle, html[data-theme="dark"] .header .site-title {
+            color: var(--text-color-dark);
+            text-shadow: 0 0 10px rgba(var(--accent-color), 0.3);
+        }
+
+        .footer-content {
+            background: linear-gradient(135deg, var(--glass-bg-light), var(--gradient-end-light));
+            padding: 2.5rem 1.5rem;
+            border-top: 1px solid var(--input-border-light);
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        html[data-theme="dark"] .footer-content {
+            background: linear-gradient(135deg, var(--glass-bg-dark), var(--gradient-end-dark));
+            border-top: 1px solid var(--input-border-dark);
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--glass-bg-light), rgba(var(--primary-color), 0.2));
+            backdrop-filter: blur(var(--glass-blur));
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        html[data-theme="dark"] .header {
+            background: linear-gradient(135deg, var(--glass-bg-dark), rgba(var(--secondary-color), 0.2));
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header .logo-section, .header .language-toggle {
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+        }
+
+        .logo {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-secondary));
+            border-radius: 50%;
+            padding: 0.5rem;
+            box-shadow: 0 0 20px rgba(var(--primary-color), 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.15) rotate(6deg);
+            box-shadow: 0 0 30px rgba(var(--primary-color), 0.5), 0 0 10px rgba(var(--accent-secondary), 0.3);
+        }
+
+        .mini-bio-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            background: rgba(var(--glass-bg-light), 0.8);
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        html[data-theme="dark"] .mini-bio-section {
+            background: rgba(var(--glass-bg-dark), 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .bio-image {
+            position: relative;
+            width: 4.5rem;
+            height: 4.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .bio-image {
+                width: 5.5rem;
+                height: 5.5rem;
+            }
+        }
+
+        .image-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(var(--info-color), 0.4) 0%, rgba(var(--secondary-color), 0.2) 70%);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            z-index: 0;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--background-color-light);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        html[data-theme="dark"] .profile-img {
+            border-color: var(--background-color-dark);
+        }
+
+        .profile-img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .bio-text {
+            text-align: center;
+            color: var(--text-color-light);
+        }
+
+        @media (min-width: 768px) {
+            .bio-text {
+                text-align: left;
+            }
+        }
+
+        html[data-theme="dark"] .bio-text {
+            color: var(--text-color-dark);
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .social-links {
+                flex-direction: row;
+                gap: 1.5rem;
+            }
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .social-link:hover::before {
+            left: 100%;
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, color-mix(in srgb, var(--primary-color) 70%, var(--accent-secondary)), color-mix(in srgb, var(--secondary-color) 70%, var(--accent-color)));
+        }
+
+        .social-link i {
+            font-size: 1.4rem;
+        }
+
+        .social-link:hover i {
+            font-size: 1.5rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Enhanced Dark Mode Toggle Button */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(var(--primary-color), 0.6), 0 0 15px rgba(var(--secondary-color), 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease, border 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.2);
+            box-shadow: 0 8px 30px rgba(var(--primary-color), 0.8), 0 0 20px rgba(var(--secondary-color), 0.5);
+            background: linear-gradient(135deg, color-mix(in srgb, var(--primary-color) 80%, white), color-mix(in srgb, var(--secondary-color) 80%, white));
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .dark-mode-toggle .fas {
+            font-size: 1.8rem;
+            color: white;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        html[data-theme="dark"] .dark-mode-toggle {
+            background: linear-gradient(135deg, var(--gradient-start-dark), var(--gradient-end-dark));
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .dark-mode-toggle:hover {
+            background: linear-gradient(135deg, #2d3748, #4a5568);
+            box-shadow: 0 8px 30px rgba(45, 55, 72, 0.7), 0 0 20px rgba(74, 85, 104, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        html[data-theme="dark"] .dark-mode-toggle .fas {
+            color: var(--text-color-dark);
+        }
+
+        /* Search Input Styles */
+        .search-input {
+            background: var(--input-bg-light);
+            color: var(--input-text-light);
+            border: 2px solid var(--input-border-light);
+            padding: 1.5rem 2rem;
+            font-size: 1.2rem;
+            width: 100%;
+            border-radius: 1.25rem;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        html[data-theme="dark"] .search-input {
+            background: var(--input-bg-dark);
+            color: var(--input-text-dark);
+            border-color: var(--input-border-dark);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: var(--input-placeholder-light);
+            transition: color 0.3s ease;
+        }
+
+        html[data-theme="dark"] .search-input::placeholder {
+            color: var(--input-placeholder-dark);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 5px var(--input-focus-ring), 0 8px 30px rgba(var(--primary-color), 0.3);
+            outline: none;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            gap: 0.75rem;
+            min-width: 200px;
+            background: rgba(26, 26, 46, 0.8); /* Darker button background in light mode */
+            border: 2px solid rgba(26, 26, 46, 0.3); /* Darker border */
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        html[data-theme="dark"] .btn {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(107, 114, 128, 0.3);
+            color: var(--text-color-dark);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn .icon {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover .icon {
+            transform: translateX(4px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, rgba(107, 72, 255, 0.9), rgba(255, 107, 129, 0.9)); /* Darker gradient */
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(107, 72, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--primary-color) 80%, white), color-mix(in srgb, var(--secondary-color) 80%, white));
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--primary-color);
+            border: 2px solid var(--input-border-light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: var(--text-color-light);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(var(--primary-color), 0.1);
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1); /* Slightly darker glass effect */
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-effect:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        html[data-theme="dark"] .glass-effect {
+            background: rgba(15, 23, 42, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .glass-effect:hover {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .search-button {
+            background: linear-gradient(135deg, rgba(107, 72, 255, 0.9), rgba(255, 107, 129, 0.9)); /* Darker gradient */
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 1.25rem;
+            font-weight: 700;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(5px);
+        }
+
+        .search-button:hover {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--primary-color) 80%, white), color-mix(in srgb, var(--secondary-color) 80%, white));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        html[data-theme="dark"] .search-button {
+            background: linear-gradient(135deg, var(--gradient-start-dark), var(--gradient-end-dark));
+        }
+
+        html[data-theme="dark"] .search-button:hover {
+            background: linear-gradient(135deg, #5a6ed9, #6a3e8c);
+        }
+    </style>
 </head>
-<body lang="{{ language }}">
+<body class="font-cairo antialiased bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-500 min-h-screen">
     <!-- SVG Icons -->
-    <div style="display: none;">
+    <div class="hidden">
         {% include 'icons.html' %}
     </div>
     
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-section">
-                    <div class="logo">
-                        <svg class="icon icon-lg">
-                            <use href="#graduation-icon"></use>
-                        </svg>
-                    </div>
-                    <h1 class="site-title">
-                        {% if language == 'ar' %}
-                            نتائج الثانوية العامة 2025
-                        {% else %}
-                            Thanaweya Results 2025
-                        {% endif %}
-                    </h1>
-                </div>
-                
-                <button class="language-toggle" onclick="toggleLanguage()">
-                    <svg class="icon">
-                        <use href="#language-icon"></use>
+    <header class="header glass-effect sticky top-0 z-50">
+        <div class="container flex items-center justify-between py-4">
+            <div class="logo-section flex items-center gap-6">
+                <a href="{{ url_for('index', language=language) }}" class="logo w-20 h-20 flex items-center justify-center focus:outline-none" aria-label="{% if language == 'ar' %}الصفحة الرئيسية{% else %}Home{% endif %}">
+                    <svg class="icon icon-lg text-white" aria-hidden="true">
+                        <use href="#graduation-icon"></use>
                     </svg>
+                </a>
+                <h1 class="site-title text-4xl font-extrabold">
                     {% if language == 'ar' %}
-                        English
+                        نتائج الثانوية العامة 2025
                     {% else %}
-                        العربية
+                        Thanaweya Results 2025
                     {% endif %}
-                </button>
+                </h1>
             </div>
+            <a href="{{ url_for('toggle_language', current_language=language) }}" class="language-toggle btn glass-effect flex items-center gap-3 px-6 py-3 rounded-xl text-white hover:bg-white/40 transition-all duration-300 focus:outline-none" aria-label="{% if language == 'ar' %}التبديل إلى الإنجليزية{% else %}Switch to Arabic{% endif %}">
+                <svg class="icon text-white" aria-hidden="true">
+                    <use href="#language-icon"></use>
+                </svg>
+                {% if language == 'ar' %}
+                    English
+                {% else %}
+                    العربية
+                {% endif %}
+            </a>
         </div>
     </header>
     
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content min-h-[calc(100vh-22rem)] py-16">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
     </main>
     
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <p class="footer-text">
+    <footer class="footer-content">
+        <div class="container flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="mini-bio-section flex items-center gap-6">
+                <div class="bio-image">
+                    <div class="image-glow"></div>
+                    <img src="https://i.ibb.co/qLK5P42H/1c21c451-01cf-463f-b312-80d3f927d5f3.jpg" alt="{% if language == 'ar' %}صورة مروان{% else %}Marwan's Photo{% endif %}" class="profile-img">
+                </div>
+                <div class="bio-text">
+                    <h3 class="bio-name text-2xl font-semibold">{% if language == 'ar' %}مروان عبد الغفار{% else %}Marwan Abdelghaffar{% endif %}</h3>
+                    <p class="bio-description text-lg">
+                        {% if language == 'ar' %}
+                            مطور AI | متدرب علوم البيانات @WOW Immersive | منحة Google & Kaggle | دبلوم AI تطبيقي - WorldQuant.
+                        {% else %}
+                            AI Developer | Data Science Intern @WOW Immersive | Google & Kaggle Scholar | Applied AI Diploma - WorldQuant.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="contact-section text-center md:text-right">
+                <p class="footer-text text-lg">
                     {% if language == 'ar' %}
-                        صنع بواسطة مروان ياسر
+                        تم التصميم بواسطة: مروان عبد الغفار
                     {% else %}
-                        Made by Marwan Abdelgaffar
+                        Designed by: Marwan Abdelghaffar
                     {% endif %}
                 </p>
-                <div class="social-links">
-                    <a href="https://www.linkedin.com/in/Marwan-Abdelghaffar/" class="social-link" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-                        <svg class="icon">
-                            <use href="#linkedin-icon"></use>
-                        </svg>
+                <div class="social-links flex justify-center md:justify-end gap-4 mt-4">
+                    <a href="https://www.linkedin.com/in/Marwan-Abdelghaffar/" target="_blank" rel="noopener noreferrer" class="social-link">
+                        <i class="fab fa-linkedin"></i>
                     </a>
-                    <a href="https://github.com/marwanyasser2005" class="social-link" target="_blank" rel="noopener noreferrer" title="GitHub">
-                        <svg class="icon">
-                            <use href="#github-icon"></use>
-                        </svg>
+                    <a href="https://github.com/marwanyasser2005" target="_blank" rel="noopener noreferrer" class="social-link">
+                        <i class="fab fa-github"></i>
                     </a>
                 </div>
             </div>
@@ -98,8 +591,51 @@
     </footer>
     
     <!-- JavaScript -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js" integrity="sha384-..." crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.js" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({ duration: 1200, easing: 'ease-in-out', once: true });
+
+            const html = document.documentElement;
+            const toggleButtons = document.querySelectorAll('.dark-mode-toggle');
+            const themeIcon = toggleButtons[0].querySelector('i');
+
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                html.dataset.theme = savedTheme;
+                if (savedTheme === 'dark') themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                html.dataset.theme = prefersDark ? 'dark' : 'light';
+                if (prefersDark) themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const isDark = html.dataset.theme === 'dark';
+                    const newTheme = isDark ? 'light' : 'dark';
+                    html.dataset.theme = newTheme;
+                    localStorage.setItem('theme', newTheme);
+                    themeIcon.classList.toggle('fa-moon', newTheme === 'light');
+                    themeIcon.classList.toggle('fa-sun', newTheme === 'dark');
+                });
+            });
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!savedTheme) {
+                    const newTheme = e.matches ? 'dark' : 'light';
+                    html.dataset.theme = newTheme;
+                    themeIcon.classList.toggle('fa-moon', !e.matches);
+                    themeIcon.classList.toggle('fa-sun', e.matches);
+                }
+            });
+        });
+    </script>
+    <button class="dark-mode-toggle" aria-label="Toggle Dark/Light Mode">
+        <i class="fas fa-moon"></i>
+    </button>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
-
